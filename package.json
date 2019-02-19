@@ -5,17 +5,50 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "eject": "expo eject",
-    "test": "node ./node_modules/jest/bin/jest.js --watchAll"
+    "test": "jest --coverage"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "react-native",
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    },
+    "collectCoverageFrom": [
+      "app/redux/**/*.{js,jsx}",
+      "!app/redux/**/*.action.{js,jsx}",
+      "!app/redux/combinedReducers.js",
+      "!app/redux/rootSaga.js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{jsx,js}": [
+      "flow focus-check",
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{jsx,js,json,md,ts}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
     "expo": "^32.0.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-navigation": "^3.0.9"
+    "react-native-extended-stylesheet": "^0.11.1",
+    "react-navigation": "^3.0.9",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^5.10.0",
+    "redux-saga": "^1.0.1",
+    "reselect": "^4.0.0",
+    "validator": "^10.11.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
