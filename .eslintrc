@@ -1,0 +1,35 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "airbnb-base",
+    "airbnb",
+    "plugin:prettier/recommended"
+  ],
+  "env": {
+    "jest": true
+  },
+  "rules": {
+    "react/prefer-stateless-function": "off",
+    "react/jsx-filename-extension": "off",
+    "import/prefer-default-export": 1,
+    "react/destructuring-assignment": "off"
+  },
+  "globals": {
+    "Generator": true,
+    "fetch": true,
+    "navigator": true,
+    "FormData": true
+  }
+}
