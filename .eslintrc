@@ -24,7 +24,8 @@
     "react/prefer-stateless-function": "off",
     "react/jsx-filename-extension": "off",
     "import/prefer-default-export": 1,
-    "react/destructuring-assignment": "off"
+    "react/destructuring-assignment": "off",
+    "global-require": 1
   },
   "globals": {
     "Generator": true,

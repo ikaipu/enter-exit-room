@@ -42,7 +42,7 @@ describe('request saga tests', () => {
         timeout: undefined,
         cancelled: undefined,
       }).value,
-    ).toEqual(put(requestComplete('LOGIN', '', { success: true })));
+    ).toEqual(put(requestComplete('LOGIN', '')));
 
     expect(gen.next().value).toBeUndefined();
   });
@@ -65,7 +65,7 @@ describe('request saga tests', () => {
     const requestAction = sendRequest('LOGIN', '', {});
     const gen = defaultSendRequest(requestAction);
 
-    gen.next()
+    gen.next();
 
     expect(gen.throw('API ERROR').value).toEqual(
       put(requestError('LOGIN', '', 'API ERROR')),
@@ -100,7 +100,7 @@ describe('request saga tests', () => {
         timeout: undefined,
         cancelled: undefined,
       }).value,
-    ).toEqual(put(requestComplete('LOGIN', '', { success: true })));
+    ).toEqual(put(requestComplete('LOGIN', '')));
 
     expect(gen.next().value).toEqual(put(successAction));
   });
@@ -120,7 +120,7 @@ describe('request saga tests', () => {
         timeout: undefined,
         cancelled: undefined,
       }).value,
-    ).toEqual(put(requestComplete('LOGIN', '', { success: true })));
+    ).toEqual(put(requestComplete('LOGIN', '')));
 
     expect(gen.next().value).toEqual(all([put(action1), put(action2)]));
   });
