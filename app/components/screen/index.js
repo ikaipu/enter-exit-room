@@ -1,3 +1,3 @@
-import Screen from './screen';
+import Screen from './Screen';
 
 export { Screen };

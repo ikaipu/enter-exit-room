@@ -1,4 +1,4 @@
-import EmailInput from './emailInput';
-import PasswordInput from './passwordInput';
+import EmailInput from './EmailInput';
+import PasswordInput from './PasswordInput';
 
 export { EmailInput, PasswordInput };

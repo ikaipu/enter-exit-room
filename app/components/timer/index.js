@@ -1,4 +1,4 @@
-import CountDown from './countDown';
-import StopWatch from './stopWatch';
+import CountDown from './CountDown';
+import StopWatch from './StopWatch';
 
 export { CountDown, StopWatch };
