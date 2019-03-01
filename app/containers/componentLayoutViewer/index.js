@@ -1,3 +1,3 @@
-import ComponentLayoutViewer from './componentLayoutViewer';
+import ComponentLayoutViewer from './ComponentLayoutViewer';
 
 export { ComponentLayoutViewer };
