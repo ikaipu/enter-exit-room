@@ -113,7 +113,7 @@ class Home extends PureComponent<Props> {
     </View>
   );
 
-  serviceButton = (listening: boolean) => {
+  serviceButton = listening => {
     let text = 'Start Service';
     let onPress = this.subscribeToService;
 
