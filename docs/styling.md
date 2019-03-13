@@ -11,17 +11,31 @@ Global styles like the default font size, colors, etc. should be configured in [
 `theme.js`
 
 ```
-import { primaryGray, darkGray } from './colors';
+export const primaryGray = '#8f919c';
+export const darkGray = '#58595b';
+
+export const tabActiveTintColor = '#458B00';
+export const tabIconSelectedColor = '#458B00';
+export const tabIconDefaultColor = '#ccc';
+export const tabLabelFontSize = 12;
+export const tabIconSize = 26;
 
 export default {
-  $rem: 16,
+  // initial setup
+  $rem: 16, // default font size
+  $fontFamily: 'Heebo-Medium',
 
+  // text
   $textHeaderColor: darkGray,
   $textDefaultColor: primaryGray,
   $textDefaultFontSize: '1rem',
   $textHeaderFontSize: '1.25rem',
-};
 
+  // tab
+  $tabIconSelectedColor: tabIconSelectedColor,
+  $tabIconDefaultColor: tabIconDefaultColor,
+  $tabIconMarginBottom: -3,
+};
 ```
 
 usage in `style.js`:
