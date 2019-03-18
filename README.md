@@ -36,11 +36,13 @@ A step by step series of examples that tell you how to get a development env run
 
 ### android emulator
 
+- npm start
 - open android emulator
-- press `a` key to install on android
+- press `a` key to run on android
 
 ### android device
 
+- npm start
 - connect device to pc/mac
 - enable usb debugging on device
 - press `a` key to install on android
