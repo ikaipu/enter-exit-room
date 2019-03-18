@@ -7,6 +7,15 @@ export const REQUEST_ERROR = 'REQUEST_ERROR';
 export const REQUEST_COMPLETE = 'REQUEST_COMPLETE';
 export const DISMISS_RESULT = 'DISMISS_RESULT';
 
+/*
+ * Does not fetch the request right away after being dispatched;
+ * uniqueness is based on `key` and `id` parameters;
+ *
+ * The most common use of this action is if a user types in the search bar,
+ * the search request will not be executed while the user is still typing.
+ *
+ * The time interval between key presses can be changed in `debounceTimeoutSeconds` src/config/settings.js
+ */
 export const debounceRequest = (
   key: string,
   id: string,
@@ -24,6 +33,10 @@ export const debounceRequest = (
   },
 });
 
+/*
+ * Executes the request on every dispatch;
+ * uniqueness is based on `key` and `id` parameters;
+ */
 export const sendRequest = (
   key: string,
   id: string,
@@ -41,6 +54,13 @@ export const sendRequest = (
   },
 });
 
+/*
+ * Executes the request on every dispatch;
+ * uniqueness is based on `key` and `id` parameters;
+ * For every dispatch, all previous requests will be cancelled.
+ *
+ * ex: sendRequestLatest is dispatch twice, the first will be cancelled if it is not yet done.
+ */
 export const sendRequestLatest = (
   key: string,
   id: string,
@@ -63,6 +83,9 @@ export const sendRequestLatest = (
  * uniqueness is based on `key` and `id` parameters;
  * in case of dispatching sendRequestAwait('SOME_KEY', 'some_id') multiple times,
  * while the first is executed, the next ones will be ignored
+ *
+ * The most common use for this action is if the user presses the login button multiple times,
+ * the request will only be called once or until it is done.
  */
 export const sendRequestAwait = (
   key: string,
@@ -81,6 +104,9 @@ export const sendRequestAwait = (
   },
 });
 
+/*
+ * use this to cancel a request with the same key and id
+ */
 export const cancelRequest = (key: string, id: string) => ({
   type: CANCEL_REQUEST,
   payload: {
@@ -89,6 +115,9 @@ export const cancelRequest = (key: string, id: string) => ({
   },
 });
 
+/*
+ * use this to dispatch an error
+ */
 export const requestError = (key: string, id: string, error: any) => ({
   type: REQUEST_ERROR,
   payload: {
@@ -98,6 +127,9 @@ export const requestError = (key: string, id: string, error: any) => ({
   },
 });
 
+/*
+ * call this when the request is done
+ */
 export const requestComplete = (key: string, id: string, response: any) => ({
   type: REQUEST_COMPLETE,
   payload: {
@@ -107,6 +139,9 @@ export const requestComplete = (key: string, id: string, response: any) => ({
   },
 });
 
+/*
+ * use this to dismiss a request's result and/or error
+ */
 export const dismissResult = (key: string, id: string) => ({
   type: DISMISS_RESULT,
   payload: {
