@@ -37,3 +37,6 @@ declare module 'validator' {
 declare module 'redux-saga/effects' {
   declare module.exports: any;
 }
+declare module 'axios' {
+  declare module.exports: any;
+}

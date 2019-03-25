@@ -15,7 +15,7 @@ import {
   sendRequestLatest,
 } from './request/request.action';
 import { START_DUMMY_SUBSCRIPTION } from './dummy/dummy.action';
-import { watchSubscription } from './dummy/dummy.saga';
+import { watchSubscription, dummyRequest } from './dummy/dummy.saga';
 import defaultRequestSaga from './request/request.saga';
 import { login } from './auth/auth.saga';
 import { REHYDRATE_COMPLETE } from './app/app.action';
@@ -40,6 +40,8 @@ function* afterRehydrate() {
 function* sendRequest(action: Object) {
   switch (action.payload.key) {
     case SAMPLE:
+      yield fork(dummyRequest, action);
+      break;
     case LOGIN:
       yield fork(login, action);
       break;
@@ -54,8 +56,8 @@ const navigate = (action: Object) => {
 
 function* dispatchRequest(action: Object) {
   yield delay(debounceTimeoutSeconds * 1000);
-  const { key, id, params, successAction, failureAction } = action.payload;
-  yield put(sendRequestLatest(key, id, params, successAction, failureAction));
+  const { key, id, request, options } = action.payload;
+  yield put(sendRequestLatest(key, id, request, options));
 }
 
 export default function* rootSaga(): Generator<void, void, void> {

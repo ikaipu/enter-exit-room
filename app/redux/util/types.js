@@ -1,6 +1,6 @@
 export type GlobalState = {
   authStore: Object,
-  demoStore: Object,
+  dummyStore: Object,
   requestStore: Object,
 };
 
