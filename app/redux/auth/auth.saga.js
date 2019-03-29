@@ -7,8 +7,7 @@ export function* login(action: Object): Generator<*, *, *> {
   const {
     key,
     id,
-    // params: { email, password },
-    successAction,
+    options: { successAction },
   } = action.payload;
 
   try {

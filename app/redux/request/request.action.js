@@ -19,17 +19,23 @@ export const DISMISS_RESULT = 'DISMISS_RESULT';
 export const debounceRequest = (
   key: string,
   id: string,
-  params: Object,
-  successAction?: Object | Object[],
-  failureAction?: Object | Object[],
+  request: {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    route: string,
+    params: Object,
+  },
+  options?: {
+    successAction?: Object | Object[],
+    failureAction?: Object | Object[],
+    responseActionName?: string,
+  },
 ) => ({
   type: DEBOUNCE_REQUEST,
   payload: {
     key,
     id,
-    params,
-    successAction,
-    failureAction,
+    request,
+    options,
   },
 });
 
@@ -40,17 +46,23 @@ export const debounceRequest = (
 export const sendRequest = (
   key: string,
   id: string,
-  params: Object,
-  successAction?: Object | Object[],
-  failureAction?: Object | Object[],
+  request: {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    route: string,
+    params: Object,
+  },
+  options?: {
+    successAction?: Object | Object[],
+    failureAction?: Object | Object[],
+    responseActionName?: string,
+  },
 ) => ({
   type: SEND_REQUEST,
   payload: {
     key,
     id,
-    params,
-    successAction,
-    failureAction,
+    request,
+    options,
   },
 });
 
@@ -64,17 +76,23 @@ export const sendRequest = (
 export const sendRequestLatest = (
   key: string,
   id: string,
-  params: Object,
-  successAction?: Object | Object[],
-  failureAction?: Object | Object[],
+  request: {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    route: string,
+    params: Object,
+  },
+  options?: {
+    successAction?: Object | Object[],
+    failureAction?: Object | Object[],
+    responseActionName?: string,
+  },
 ) => ({
   type: SEND_REQUEST_LATEST,
   payload: {
     key,
     id,
-    params,
-    successAction,
-    failureAction,
+    request,
+    options,
   },
 });
 
@@ -90,17 +108,23 @@ export const sendRequestLatest = (
 export const sendRequestAwait = (
   key: string,
   id: string,
-  params: Object,
-  successAction?: Object | Object[],
-  failureAction?: Object | Object[],
+  request: {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    route: string,
+    params: Object,
+  },
+  options?: {
+    successAction?: Object | Object[],
+    failureAction?: Object | Object[],
+    responseActionName?: string,
+  },
 ) => ({
   type: SEND_REQUEST_AWAIT,
   payload: {
     key,
     id,
-    params,
-    successAction,
-    failureAction,
+    request,
+    options,
   },
 });
 

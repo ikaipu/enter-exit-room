@@ -39,7 +39,7 @@ export default function* sendRequest(): Generator<*, *, *> {
   try {
     const { response, timeout, cancelled } = yield race({
       response: call(dummyApiRequest),
-      timeout: call(delay, customTimeoutSeconds * 1000),
+      timeout: delay(customTimeoutSeconds * 1000),
       cancelled: call(CANCEL_ACTION, action),
     });
 
@@ -81,7 +81,7 @@ export default function* sendRequest(): Generator<*, *, *> {
   try {
     const { response, timeout, cancelled } = yield race({
       response: call(dummyApiRequest),
-      timeout: call(delay, timeoutSeconds * 1000),
+      timeout: delay(timeoutSeconds * 1000),
       cancelled: call(shouldCancel, action),
     });
 

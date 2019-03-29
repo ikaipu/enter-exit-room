@@ -1,24 +1,11 @@
 import { put, take, race, call, all, delay } from 'redux-saga/effects';
+import Api from '../../modules/Api';
 import { timeoutSeconds } from '../../config/settings';
 import {
   CANCEL_REQUEST,
   requestError,
   requestComplete,
 } from './request.action';
-
-function* dummyApiRequest() {
-  const shouldTimeout = Math.random() >= 0.5;
-  const shouldNotFail = Math.random() >= 0.5;
-
-  if (shouldTimeout) {
-    yield delay(4000);
-  } else {
-    yield delay(2000);
-    return { success: shouldNotFail };
-  }
-
-  return { success: true };
-}
 
 /* `take` with conditional payload  */
 export function* shouldCancel(actionParam: Object): Generator<*, *, *> {
@@ -37,11 +24,13 @@ export function* shouldCancel(actionParam: Object): Generator<*, *, *> {
   return true;
 }
 
-/* sample request saga */
+/* generic request saga */
 export default function* sendRequest(action: Object): Generator<*, *, *> {
   try {
-    const { timeout, cancelled } = yield race({
-      response: call(dummyApiRequest),
+    const { method, route, params } = action.payload.request;
+
+    const { response, timeout, cancelled } = yield race({
+      response: call(Api[method.toLowerCase()], route, params || {}),
       timeout: delay(timeoutSeconds * 1000),
       cancelled: call(shouldCancel, action),
     });
@@ -58,15 +47,31 @@ export default function* sendRequest(action: Object): Generator<*, *, *> {
       return;
     }
 
-    yield put(requestComplete(action.payload.key, action.payload.id));
+    yield put(requestComplete(action.payload.key, action.payload.id, response));
 
-    if (action.payload.successAction) {
-      if (action.payload.successAction.constructor === Array) {
-        const effects = action.payload.successAction.map(el => put(el));
+    if (action.payload.options) {
+      const { options } = action.payload;
 
-        yield all(effects);
-      } else if (typeof action.payload.successAction === 'object') {
-        yield put(action.payload.successAction);
+      if (options.successAction) {
+        if (options.successAction.constructor === Array) {
+          const effects = options.successAction.map(el => put(el));
+
+          yield all(effects);
+        } else if (typeof options.successAction === 'object') {
+          yield put(options.successAction);
+        }
+      }
+
+      if (
+        options.responseActionName &&
+        typeof options.responseActionName === 'string'
+      ) {
+        yield put({
+          type: options.responseActionName,
+          payload: {
+            response,
+          },
+        });
       }
     }
   } catch (err) {

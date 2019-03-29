@@ -1,39 +1,66 @@
 import React, { PureComponent } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
-import { StackActions } from 'react-navigation';
 
 import { Screen } from '../../components/screen';
 import { Alert } from '../../components/modal';
 import styles from './styles';
+
+import type {
+  ActionDispatcher,
+  RequestObject,
+  GlobalState,
+} from '../../redux/util/types';
 import {
-  sendRequest,
-  cancelRequest,
-  dismissResult,
-} from '../../redux/request/request.action';
+  login,
+  cancelLogin,
+  dismissLoginResult,
+} from '../../redux/auth/auth.action';
+import { loginRequestState } from '../../redux/auth/auth.selector';
+import {
+  request1State,
+  request2State,
+  request3State,
+} from '../../redux/dummy/dummy.selector';
 import {
   startDummySubscription,
   stopDummySubscription,
+  request1,
+  request2,
+  request3,
+  cancelRequest1,
+  cancelRequest2,
+  cancelRequest3,
 } from '../../redux/dummy/dummy.action';
-import { SAMPLE, LOGIN } from '../../redux/request/request.constants';
-import { selectRequestObject } from '../../redux/request/request.selector';
 
-type Props = {
-  sendRequest: Function,
-  cancelRequest: Function,
-  dismissResult: Function,
-
-  startDummySubscription: Function,
-  stopDummySubscription: Function,
-
+type StateProps = {
   count: number,
   listening: boolean,
 
-  login: Object,
-  request1: Object,
-  request2: Object,
-  request3: Object,
+  loginRequestState: RequestObject,
+  request1State: RequestObject,
+  request2State: RequestObject,
+  request3State: RequestObject,
 };
+
+type DispatchProps = {
+  login: () => ActionDispatcher,
+  cancelLogin: () => ActionDispatcher,
+  dismissLoginResult: () => ActionDispatcher,
+
+  request1: () => ActionDispatcher,
+  request2: () => ActionDispatcher,
+  request3: () => ActionDispatcher,
+
+  cancelRequest1: () => ActionDispatcher,
+  cancelRequest2: () => ActionDispatcher,
+  cancelRequest3: () => ActionDispatcher,
+
+  startDummySubscription: () => ActionDispatcher,
+  stopDummySubscription: () => ActionDispatcher,
+};
+
+type Props = StateProps & DispatchProps;
 
 class Home extends PureComponent<Props> {
   subscribeToService = () => {
@@ -42,49 +69,6 @@ class Home extends PureComponent<Props> {
 
   unsubscribeFromService = () => {
     this.props.stopDummySubscription();
-  };
-
-  login = () => {
-    this.props.sendRequest(
-      LOGIN,
-      'login',
-      {},
-      StackActions.replace({
-        routeName: 'Main',
-      }),
-    );
-  };
-
-  dismissLoginError = () => {
-    this.props.dismissResult(LOGIN, 'login');
-  };
-
-  cancel = () => {
-    this.props.cancelRequest(LOGIN, 'login', {});
-  };
-
-  request1 = () => {
-    this.props.sendRequest(SAMPLE, 'request1', {});
-  };
-
-  request2 = () => {
-    this.props.sendRequest(SAMPLE, 'request2', {});
-  };
-
-  request3 = () => {
-    this.props.sendRequest(SAMPLE, 'request3', {});
-  };
-
-  cancel1 = () => {
-    this.props.cancelRequest(SAMPLE, 'request1', {});
-  };
-
-  cancel2 = () => {
-    this.props.cancelRequest(SAMPLE, 'request2', {});
-  };
-
-  cancel3 = () => {
-    this.props.cancelRequest(SAMPLE, 'request3', {});
   };
 
   row = (
@@ -137,44 +121,47 @@ class Home extends PureComponent<Props> {
           <Text style={styles.dots}>
             {[...Array(this.props.count)].map(() => `.`)}
           </Text>
-          <TouchableOpacity onPress={this.login}>
+          <TouchableOpacity onPress={this.props.login}>
             <Text>Login</Text>
           </TouchableOpacity>
           {this.row(
             'Request 1',
-            this.request1,
-            this.cancel1,
-            this.props.request1.sending,
-            this.props.request1.message,
-            this.props.request1.error,
+            this.props.request1,
+            this.props.cancelRequest1,
+            this.props.request1State.sending,
+            this.props.request1State.message,
+            this.props.request1State.error,
           )}
           {this.row(
             'Request 2',
-            this.request2,
-            this.cancel2,
-            this.props.request2.sending,
-            this.props.request2.message,
-            this.props.request2.error,
+            this.props.request2,
+            this.props.cancelRequest2,
+            this.props.request2State.sending,
+            this.props.request2State.message,
+            this.props.request2State.error,
           )}
           {this.row(
             'Request 3',
-            this.request3,
-            this.cancel3,
-            this.props.request3.sending,
-            this.props.request3.message,
-            this.props.request3.error,
+            this.props.request3,
+            this.props.cancelRequest3,
+            this.props.request3State.sending,
+            this.props.request3State.message,
+            this.props.request3State.error,
           )}
         </View>
         <Alert
-          showActivityIndicator={this.props.login.sending}
-          visible={this.props.login.sending || this.props.login.error}
-          labelText={this.props.login.message}
+          showActivityIndicator={this.props.loginRequestState.sending}
+          visible={
+            this.props.loginRequestState.sending ||
+            this.props.loginRequestState.error
+          }
+          labelText={this.props.loginRequestState.message}
           buttons={[
             {
-              title: this.props.login.sending ? 'Cancel' : 'Ok',
-              onPress: this.props.login.sending
-                ? this.cancel
-                : this.dismissLoginError,
+              title: this.props.loginRequestState.sending ? 'Cancel' : 'Ok',
+              onPress: this.props.loginRequestState.sending
+                ? this.props.cancelLogin
+                : this.props.dismissLoginResult,
             },
           ]}
         />
@@ -183,24 +170,25 @@ class Home extends PureComponent<Props> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps: GlobalState => StateProps = state => ({
   count: state.dummyStore.count,
   listening: state.dummyStore.listening,
-  login: selectRequestObject(state, LOGIN, 'login'),
-  request1: selectRequestObject(state, SAMPLE, 'request1'),
-  request2: selectRequestObject(state, SAMPLE, 'request2'),
-  request3: selectRequestObject(state, SAMPLE, 'request3'),
+  loginRequestState: loginRequestState(state),
+  request1State: request1State(state),
+  request2State: request2State(state),
+  request3State: request3State(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  sendRequest: (
-    key: string,
-    id: string,
-    params: Object,
-    successAction?: Object,
-  ) => dispatch(sendRequest(key, id, params, successAction)),
-  cancelRequest: (key: string, id: string) => dispatch(cancelRequest(key, id)),
-  dismissResult: (key: string, id: string) => dispatch(dismissResult(key, id)),
+const mapDispatchToProps: ActionDispatcher => DispatchProps = dispatch => ({
+  login: () => dispatch(login()),
+  cancelLogin: () => dispatch(cancelLogin()),
+  dismissLoginResult: () => dispatch(dismissLoginResult()),
+  request1: () => dispatch(request1()),
+  request2: () => dispatch(request2()),
+  request3: () => dispatch(request3()),
+  cancelRequest1: () => dispatch(cancelRequest1()),
+  cancelRequest2: () => dispatch(cancelRequest2()),
+  cancelRequest3: () => dispatch(cancelRequest3()),
   startDummySubscription: () => dispatch(startDummySubscription()),
   stopDummySubscription: () => dispatch(stopDummySubscription()),
 });
