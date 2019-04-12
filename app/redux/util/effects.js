@@ -1,4 +1,5 @@
-import { take, call, fork } from 'redux-saga/effects';
+import { take, call, fork, put } from 'redux-saga/effects';
+import { overrideLatest } from '../request/request.action';
 
 /*
  ignores action while sage is not done
@@ -47,6 +48,51 @@ export const takeLeadingByPayload = (
           yield call(saga, ...args.concat(action));
 
           delete leadingActions[patternOrChannel][objKey];
+        });
+      }
+    }
+  });
+
+/*
+ takeLatest with conditional payload
+ */
+const latestActions = {};
+
+export const takeLatestByPayload = (
+  patternOrChannel: any,
+  saga: any,
+  ...args: any
+) =>
+  fork(function*() {
+    if (!latestActions[patternOrChannel]) {
+      latestActions[patternOrChannel] = {};
+    }
+
+    while (true) {
+      const action = yield take(patternOrChannel);
+      const objKey = `${action.payload.key}_${action.payload.id}`;
+
+      if (!latestActions[patternOrChannel][objKey]) {
+        yield fork(function*() {
+          latestActions[patternOrChannel][objKey] = {
+            ...action,
+          };
+
+          yield call(saga, ...args.concat(action));
+
+          delete latestActions[patternOrChannel][objKey];
+        });
+      } else {
+        yield put(overrideLatest(action.payload.key, action.payload.id));
+
+        yield fork(function*() {
+          latestActions[patternOrChannel][objKey] = {
+            ...action,
+          };
+
+          yield call(saga, ...args.concat(action));
+
+          delete latestActions[patternOrChannel][objKey];
         });
       }
     }

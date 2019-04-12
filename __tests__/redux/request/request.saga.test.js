@@ -54,7 +54,7 @@ describe('request saga tests', () => {
     expect(gen.next().value).toEqual(
       put({
         type: 'LOGIN_SUCCESS',
-        payload: { response: { success: true } },
+        payload: { response: { success: true }, key: 'LOGIN', id: '' },
       }),
     );
 

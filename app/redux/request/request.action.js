@@ -3,6 +3,7 @@ export const SEND_REQUEST = 'SEND_REQUEST';
 export const SEND_REQUEST_AWAIT = 'SEND_REQUEST_AWAIT';
 export const SEND_REQUEST_LATEST = 'SEND_REQUEST_LATEST';
 export const CANCEL_REQUEST = 'CANCEL_REQUEST';
+export const OVERRIDE_LATEST = 'OVERRIDE_LATEST';
 export const REQUEST_ERROR = 'REQUEST_ERROR';
 export const REQUEST_COMPLETE = 'REQUEST_COMPLETE';
 export const DISMISS_RESULT = 'DISMISS_RESULT';
@@ -133,6 +134,17 @@ export const sendRequestAwait = (
  */
 export const cancelRequest = (key: string, id: string) => ({
   type: CANCEL_REQUEST,
+  payload: {
+    key,
+    id,
+  },
+});
+
+/*
+ * used by sendRequestLatest; DON'T USE
+ */
+export const overrideLatest = (key: string, id: string) => ({
+  type: OVERRIDE_LATEST,
   payload: {
     key,
     id,
