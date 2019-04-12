@@ -1,4 +1,4 @@
-import { sendRequestAwait, cancelRequest } from '../request/request.action';
+import { cancelRequest, sendRequestLatest } from '../request/request.action';
 import { SAMPLE } from '../request/request.constants';
 
 export const START_DUMMY_SUBSCRIPTION = 'START_DUMMY_SUBSCRIPTION';
@@ -7,21 +7,21 @@ export const SUBSCRIPTION_ERROR = 'SUBSCRIPTION_ERROR';
 export const PONG = 'PONG';
 
 export const request1 = () =>
-  sendRequestAwait(SAMPLE, 'request1', {
+  sendRequestLatest(SAMPLE, 'request1', {
     method: 'GET',
     route: 'dummy',
     params: {},
   });
 
 export const request2 = () =>
-  sendRequestAwait(SAMPLE, 'request2', {
+  sendRequestLatest(SAMPLE, 'request2', {
     method: 'GET',
     route: 'dummy',
     params: {},
   });
 
 export const request3 = () =>
-  sendRequestAwait(SAMPLE, 'request3', {
+  sendRequestLatest(SAMPLE, 'request3', {
     method: 'GET',
     route: 'dummy',
     params: {},

@@ -1,12 +1,5 @@
-import {
-  fork,
-  takeEvery,
-  select,
-  takeLatest,
-  delay,
-  put,
-} from 'redux-saga/effects';
-import { takeLeadingByPayload } from './util/effects';
+import { fork, takeEvery, select, delay, put } from 'redux-saga/effects';
+import { takeLeadingByPayload, takeLatestByPayload } from './util/effects';
 import {
   DEBOUNCE_REQUEST,
   SEND_REQUEST,
@@ -61,9 +54,9 @@ function* dispatchRequest(action: Object) {
 }
 
 export default function* rootSaga(): Generator<void, void, void> {
-  yield takeLatest(DEBOUNCE_REQUEST, dispatchRequest);
+  yield takeLatestByPayload(DEBOUNCE_REQUEST, dispatchRequest);
   yield takeEvery(SEND_REQUEST, sendRequest);
-  yield takeLatest(SEND_REQUEST_LATEST, sendRequest);
+  yield takeLatestByPayload(SEND_REQUEST_LATEST, sendRequest);
   yield takeLeadingByPayload(SEND_REQUEST_AWAIT, sendRequest);
   yield takeEvery(START_DUMMY_SUBSCRIPTION, watchSubscription);
 

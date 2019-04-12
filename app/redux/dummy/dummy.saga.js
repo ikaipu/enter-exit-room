@@ -4,6 +4,7 @@ import { race, take, put, delay, call } from 'redux-saga/effects';
 import { timeoutSeconds } from '../../config/settings';
 import {
   CANCEL_REQUEST,
+  OVERRIDE_LATEST,
   requestError,
   requestComplete,
 } from '../request/request.action';
@@ -48,15 +49,16 @@ export function* watchSubscription(): Generator<*, *, *> {
 }
 
 function* dummyApiRequest() {
-  const shouldTimeout = Math.random() >= 0.5;
-  const shouldNotFail = Math.random() >= 0.5;
+  yield delay(2000);
+  // const shouldTimeout = Math.random() >= 0.5;
+  // const shouldNotFail = Math.random() >= 0.5;
 
-  if (shouldTimeout) {
-    yield delay(4000);
-  } else {
-    yield delay(2000);
-    return { success: shouldNotFail };
-  }
+  // if (shouldTimeout) {
+  //   yield delay(4000);
+  // } else {
+  //   yield delay(2000);
+  //   return { success: shouldNotFail };
+  // }
 
   return { success: true };
 }
@@ -78,15 +80,32 @@ export function* shouldCancel(actionParam: Object): Generator<*, *, *> {
   return true;
 }
 
+export function* shouldOverride(actionParam: Object): Generator<*, *, *> {
+  let notFound = true;
+
+  while (notFound) {
+    const action = yield take(OVERRIDE_LATEST);
+    if (
+      action.payload.key === actionParam.payload.key &&
+      action.payload.id === actionParam.payload.id
+    ) {
+      notFound = false;
+    }
+  }
+
+  return true;
+}
+
 export function* dummyRequest(action: Object): Generator<*, *, *> {
   try {
-    const { response, timeout, cancelled } = yield race({
+    const { response, timeout, cancelled, overridden } = yield race({
       response: call(dummyApiRequest),
       timeout: delay(timeoutSeconds * 1000),
       cancelled: call(shouldCancel, action),
+      overridden: call(shouldOverride, action),
     });
 
-    if (cancelled) {
+    if (cancelled || overridden) {
       return;
     }
 
