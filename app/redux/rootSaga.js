@@ -7,15 +7,16 @@ import {
   SEND_REQUEST_LATEST,
   sendRequestLatest,
 } from './request/request.action';
-import { START_DUMMY_SUBSCRIPTION } from './dummy/dummy.action';
-import { watchSubscription, dummyRequest } from './dummy/dummy.saga';
 import defaultRequestSaga from './request/request.saga';
-import { login } from './auth/auth.saga';
 import { REHYDRATE_COMPLETE } from './app/app.action';
 import { SAMPLE, LOGIN } from './request/request.constants';
 import NavigationService from '../modules/navigation/navigationService';
 
 import { debounceTimeoutSeconds } from '../config/settings';
+import { ENTER_ROOM } from './room/room.action';
+import { enterRoomSaga } from './room/room.saga';
+import { dummyRequest } from './dummy/dummy.saga';
+import { login } from './auth/auth.saga';
 
 /*
  * called after redux persist has rehydrated its saved data to the redux store
@@ -58,7 +59,7 @@ export default function* rootSaga(): Generator<void, void, void> {
   yield takeEvery(SEND_REQUEST, sendRequest);
   yield takeLatestByPayload(SEND_REQUEST_LATEST, sendRequest);
   yield takeLeadingByPayload(SEND_REQUEST_AWAIT, sendRequest);
-  yield takeEvery(START_DUMMY_SUBSCRIPTION, watchSubscription);
+  yield takeEvery(ENTER_ROOM, enterRoomSaga);
 
   yield takeEvery(REHYDRATE_COMPLETE, afterRehydrate);
   yield takeEvery('Navigation/NAVIGATE', navigate);

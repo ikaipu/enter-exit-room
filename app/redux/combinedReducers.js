@@ -5,6 +5,7 @@ import appReducer from './app/app.reducer';
 import authReducer from './auth/auth.reducer';
 import requestReducer from './request/request.reducer';
 import dummyReducer from './dummy/dummy.reducer';
+import roomReducer from './room/room.reducer';
 
 const authPersistConfig = {
   key: 'authStore',
@@ -17,4 +18,5 @@ export default {
   authStore: persistReducer(authPersistConfig, authReducer),
   requestStore: requestReducer,
   dummyStore: dummyReducer,
+  roomStore: roomReducer,
 };
