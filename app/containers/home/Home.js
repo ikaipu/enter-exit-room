@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Screen } from '../../components/screen';
-import { Alert } from '../../components/modal';
 import styles from './styles';
 
 import type {
@@ -11,11 +10,6 @@ import type {
   RequestObject,
   GlobalState,
 } from '../../redux/util/types';
-import {
-  login,
-  cancelLogin,
-  dismissLoginResult,
-} from '../../redux/auth/auth.action';
 import { loginRequestState } from '../../redux/auth/auth.selector';
 import {
   request1State,
@@ -32,21 +26,20 @@ import {
   cancelRequest2,
   cancelRequest3,
 } from '../../redux/dummy/dummy.action';
+import { enterRoom, exitRoom } from '../../redux/room/room.action';
 
 type StateProps = {
   count: number,
   listening: boolean,
-
-  loginRequestState: RequestObject,
+  isInRoom: boolean,
   request1State: RequestObject,
   request2State: RequestObject,
   request3State: RequestObject,
 };
 
 type DispatchProps = {
-  login: () => ActionDispatcher,
-  cancelLogin: () => ActionDispatcher,
-  dismissLoginResult: () => ActionDispatcher,
+  enterRoom: () => ActionDispatcher,
+  exitRoom: () => ActionDispatcher,
 
   request1: () => ActionDispatcher,
   request2: () => ActionDispatcher,
@@ -121,9 +114,15 @@ class Home extends PureComponent<Props> {
           <Text style={styles.dots}>
             {[...Array(this.props.count)].map(() => `.`)}
           </Text>
-          <TouchableOpacity onPress={this.props.login}>
-            <Text>Login</Text>
-          </TouchableOpacity>
+          {this.props.isInRoom ? (
+            <TouchableOpacity onPress={this.props.exitRoom}>
+              <Text>Exit Room</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={this.props.enterRoom}>
+              <Text>Enter Room</Text>
+            </TouchableOpacity>
+          )}
           {this.row(
             'Request 1',
             this.props.request1,
@@ -148,23 +147,15 @@ class Home extends PureComponent<Props> {
             this.props.request3State.message,
             this.props.request3State.error,
           )}
+          {this.row(
+            'enterRoom',
+            this.props.enterRoom,
+            this.props.exitRoom,
+            this.props.request1State.sending,
+            this.props.request1State.message,
+            this.props.request1State.error,
+          )}
         </View>
-        <Alert
-          showActivityIndicator={this.props.loginRequestState.sending}
-          visible={
-            this.props.loginRequestState.sending ||
-            this.props.loginRequestState.error
-          }
-          labelText={this.props.loginRequestState.message}
-          buttons={[
-            {
-              title: this.props.loginRequestState.sending ? 'Cancel' : 'Ok',
-              onPress: this.props.loginRequestState.sending
-                ? this.props.cancelLogin
-                : this.props.dismissLoginResult,
-            },
-          ]}
-        />
       </Screen>
     );
   }
@@ -173,6 +164,7 @@ class Home extends PureComponent<Props> {
 const mapStateToProps: GlobalState => StateProps = state => ({
   count: state.dummyStore.count,
   listening: state.dummyStore.listening,
+  isInRoom: state.roomStore.roomId !== null,
   loginRequestState: loginRequestState(state),
   request1State: request1State(state),
   request2State: request2State(state),
@@ -180,9 +172,8 @@ const mapStateToProps: GlobalState => StateProps = state => ({
 });
 
 const mapDispatchToProps: ActionDispatcher => DispatchProps = dispatch => ({
-  login: () => dispatch(login()),
-  cancelLogin: () => dispatch(cancelLogin()),
-  dismissLoginResult: () => dispatch(dismissLoginResult()),
+  enterRoom: () => dispatch(enterRoom('room1')),
+  exitRoom: () => dispatch(exitRoom()),
   request1: () => dispatch(request1()),
   request2: () => dispatch(request2()),
   request3: () => dispatch(request3()),

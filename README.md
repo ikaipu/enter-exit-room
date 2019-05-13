@@ -1,4 +1,4 @@
-# React Native Platform
+# EnterExitRoom
 
 jump start your Expo project
 

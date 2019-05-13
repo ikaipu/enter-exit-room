@@ -2,6 +2,7 @@ export type GlobalState = {
   authStore: Object,
   dummyStore: Object,
   requestStore: Object,
+  roomStore: Object,
 };
 
 export type Action = { type: string, payload?: Object };

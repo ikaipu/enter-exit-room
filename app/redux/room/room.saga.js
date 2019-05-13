@@ -1,22 +1,17 @@
 import { eventChannel } from 'redux-saga';
 import { race, take, put } from 'redux-saga/effects';
 
-import { EXIT_ROOM, roomActionError } from './room.action';
-import { pong } from '../dummy/dummy.action';
+import { EXIT_ROOM, roomActionError, updateRoom } from './room.action';
+import { subscribeRoom } from '../../infrastructures/firebase/rooms/rooms.infrastructure';
 
-const enterRoomChannel = () =>
+const enterRoomChannel = (roomId: string) =>
   eventChannel((emitter: Function) => {
-    const timer = setInterval(() => {
-      emitter(pong());
-    }, 3000);
-
-    return () => {
-      clearInterval(timer);
-    };
+    const emit = (room: Object) => emitter(updateRoom(room));
+    return subscribeRoom(roomId, emit);
   });
 
-export function* enterRoomSaga(): Generator<*, *, *> {
-  const channel = enterRoomChannel();
+export function* enterRoomSaga({ payload }: Object): Generator<*, *, *> {
+  const channel = enterRoomChannel(payload.roomId);
 
   while (true) {
     try {
